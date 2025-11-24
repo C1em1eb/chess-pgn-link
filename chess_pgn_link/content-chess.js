@@ -118,10 +118,46 @@
    * Opens share menu
    */
   async function openShareMenu() {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
+      // On analysis pages, need to open the "more" menu first
+      if (window.location.href.includes('/analysis/')) {
+        console.log('[Chess Export] Analysis page detected, opening more menu first');
+
+        // Look for the ellipsis button (3 dots menu)
+        const moreMenuSelectors = [
+          'button svg[data-glyph="mark-ellipsis-horizontal"]',
+          '.game-controls-more-menu-component button',
+          'button[aria-label*="More"]',
+          'button[aria-label*="Menu"]'
+        ];
+
+        let moreButton = null;
+        for (const selector of moreMenuSelectors) {
+          const element = document.querySelector(selector);
+          if (element) {
+            // If we found the SVG, get the parent button
+            moreButton = element.tagName === 'BUTTON' ? element : element.closest('button');
+            if (moreButton) {
+              console.log('[Chess Export] Found more menu button:', selector);
+              break;
+            }
+          }
+        }
+
+        if (moreButton) {
+          console.log('[Chess Export] Clicking more menu button');
+          moreButton.click();
+          // Wait for the dropdown menu to appear
+          await new Promise(r => setTimeout(r, 300));
+        } else {
+          console.log('[Chess Export] More menu button not found');
+        }
+      }
+
       const shareButtonSelectors = [
         '.share-game-button',
         '[data-cy="share-button"]',
+        '[data-cy="analysis-secondary-controls-menu-open-share"]', // Analysis pages
         'button[aria-label*="Share"]',
         'button[aria-label*="Partager"]',
         '.game-over-share-button',
