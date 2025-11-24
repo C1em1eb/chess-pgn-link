@@ -402,18 +402,23 @@
       createButton();
     }
 
-    // Observe changes
+    // Observe changes with debouncing
+    let debounceTimer = null;
     const observer = new MutationObserver(() => {
-      const buttonExists = !!document.getElementById(BUTTON_ID);
-      const shouldShow = shouldShowButton();
+      // Clear previous timer and wait for DOM to stabilize
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const buttonExists = !!document.getElementById(BUTTON_ID);
+        const shouldShow = shouldShowButton();
 
-      if (buttonExists && !shouldShow) {
-        // Button exists but shouldn't be shown anymore - remove it
-        removeButton();
-      } else if (!buttonExists && shouldShow) {
-        // Button doesn't exist but should be shown - create it
-        createButton();
-      }
+        if (buttonExists && !shouldShow) {
+          // Button exists but shouldn't be shown anymore - remove it
+          removeButton();
+        } else if (!buttonExists && shouldShow) {
+          // Button doesn't exist but should be shown - create it
+          createButton();
+        }
+      }, 100); // Wait 100ms for DOM to stabilize
     });
 
     observer.observe(document.body, {
