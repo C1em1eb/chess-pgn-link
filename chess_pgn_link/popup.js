@@ -54,8 +54,8 @@ async function loadHistory() {
       item.querySelector('.black-player').textContent = truncate(game.black, 15);
 
       const resultEl = item.querySelector('.result');
-      resultEl.textContent = game.result;
-      resultEl.classList.add(getResultClass(game.result));
+      const indicator = getResultIndicator(game.result);
+      resultEl.textContent = indicator ? `${indicator} ${game.result}` : game.result;
 
       item.querySelector('.date').textContent = formatDate(game.date);
 
@@ -180,12 +180,12 @@ function truncate(text, maxLength) {
 }
 
 /**
- * Returns CSS class for result
+ * Returns indicator (pastille) for result
  */
-function getResultClass(result) {
-  if (result === '1-0') return 'win';
-  if (result === '0-1') return 'loss';
-  if (result === '1/2-1/2') return 'draw';
+function getResultIndicator(result) {
+  if (result === '1-0') return '⚪';      // White wins
+  if (result === '0-1') return '⚫';      // Black wins
+  if (result === '1/2-1/2') return '◐';  // Draw
   return '';
 }
 
