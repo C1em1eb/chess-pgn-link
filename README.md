@@ -4,6 +4,7 @@
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue.svg)](https://developer.chrome.com/docs/extensions/)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-green.svg)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![Chess.com](https://img.shields.io/badge/Chess.com-Add%20Friend-green.svg)](https://www.chess.com/member/clemleb)
+[![Lichess](https://img.shields.io/badge/Lichess-Follow-black.svg)](https://lichess.org/@/clemleb)
 
 > Chrome extension to automatically export your Chess.com games to Lichess with instant analysis
 
@@ -66,7 +67,7 @@ Click the extension icon to see your recent games:
 
 4. **Load the extension**
    - Click "Load unpacked"
-   - Select the `chess-export-extension` folder
+   - Select the `chess_pgn_link` folder
 
 5. **You're ready!** 🎉
    - The extension icon appears in the Chrome toolbar
@@ -367,7 +368,6 @@ furnished to do so, subject to the following conditions:
 
 - 🐛 **Bugs**: [Open an issue](https://github.com/C1em1eb/chess-pgn-link/issues)
 - 💡 **Suggestions**: [GitHub Discussions](https://github.com/C1em1eb/chess-pgn-link/discussions)
-- 📧 **Contact**: your-email@example.com
 
 ## 📊 Statistics
 
