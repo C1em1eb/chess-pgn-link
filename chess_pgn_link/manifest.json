@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Chess PGN Link",
+  "version": "1.0.0",
+  "description": "Export your Chess.com games to Lichess for in-depth analysis with one click",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://www.chess.com/*",
+    "https://chess.com/*",
+    "https://lichess.org/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.chess.com/game/live/*", "https://www.chess.com/analysis/*", "https://www.chess.com/game/daily/*"],
+      "js": ["content-chess.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://lichess.org/paste*"],
+      "js": ["content-lichess.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
