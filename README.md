@@ -19,7 +19,7 @@ Play on Chess.com, analyze on Lichess - in one click! This extension completely 
 - 🎨 **Modern interface**: Elegant popup with dark theme
 - 🔒 **Privacy**: All data stays local, no external servers
 
-## 📸 Screenshots
+## 📋 Interface Overview
 
 ### Button on Chess.com
 After a finished game, a floating button appears in the bottom right:
@@ -301,23 +301,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 ## 🚀 Future Improvements
 
-### Short term
-- [ ] Support for Chess.com mobile mode
-- [ ] Configuration options (delays, notifications)
-- [ ] Export to FEN format
-- [ ] Badge with daily game counter
-
-### Medium term
-- [ ] Multi-platform support (Chess24, ICC)
-- [ ] Comparative engine analysis
-- [ ] Personal opening statistics
-- [ ] Cross-device synchronization
-
-### Long term
-- [ ] Firefox and Edge extensions
-- [ ] Official Lichess API integration
-- [ ] Offline mode with IndexedDB storage
-- [ ] Game sharing via short URLs
+- [ ] Firefox extension
 
 ## 🤝 Contributing
 
