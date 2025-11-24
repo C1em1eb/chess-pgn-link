@@ -307,16 +307,28 @@
   }
 
   /**
+   * Removes the button
+   */
+  function removeButton() {
+    const button = document.getElementById(BUTTON_ID);
+    if (button) {
+      button.remove();
+      console.log('[Chess Export] Button removed');
+    }
+  }
+
+  /**
    * Checks if button should be shown
    */
   function shouldShowButton() {
     const url = window.location.href;
 
-    // Finished game pages
-    if (url.includes('/game/live/') || url.includes('/game/daily/')) {
+    // Finished game pages (any game URL)
+    if (url.includes('/game/')) {
       // Check for game-over elements
       const gameOverIndicators = [
         '.game-over-modal',
+        '.game-over-modal-content',
         '.game-over-buttons',
         '.game-review-buttons',
         '[class*="game-over"]',
@@ -356,31 +368,36 @@
 
     // Observe changes
     const observer = new MutationObserver(() => {
-      if (!document.getElementById(BUTTON_ID) && shouldShowButton()) {
+      const buttonExists = !!document.getElementById(BUTTON_ID);
+      const shouldShow = shouldShowButton();
+
+      if (buttonExists && !shouldShow) {
+        // Button exists but shouldn't be shown anymore - remove it
+        removeButton();
+      } else if (!buttonExists && shouldShow) {
+        // Button doesn't exist but should be shown - create it
         createButton();
       }
     });
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
     });
 
-    // Periodic check (backup)
-    let checks = 0;
-    const maxChecks = 30;
+    // Periodic check (backup) - runs indefinitely
     const interval = setInterval(() => {
-      checks++;
-      if (document.getElementById(BUTTON_ID)) {
-        clearInterval(interval);
-        return;
-      }
-      if (shouldShowButton()) {
+      const buttonExists = !!document.getElementById(BUTTON_ID);
+      const shouldShow = shouldShowButton();
+
+      if (buttonExists && !shouldShow) {
+        // Button exists but shouldn't be shown anymore - remove it
+        removeButton();
+      } else if (!buttonExists && shouldShow) {
+        // Button doesn't exist but should be shown - create it
         createButton();
-        clearInterval(interval);
-      }
-      if (checks >= maxChecks) {
-        clearInterval(interval);
       }
     }, 1000);
   }

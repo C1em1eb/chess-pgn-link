@@ -18,7 +18,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.chess.com/game/live/*", "https://www.chess.com/analysis/*", "https://www.chess.com/game/daily/*"],
+      "matches": ["https://www.chess.com/game/*", "https://www.chess.com/analysis/*"],
       "js": ["content-chess.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
