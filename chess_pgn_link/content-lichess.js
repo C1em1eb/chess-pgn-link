@@ -4,6 +4,9 @@
 (function() {
   'use strict';
 
+  // Cross-browser API compatibility
+  const api = typeof browser !== 'undefined' ? browser : chrome;
+
   // Avoid multiple executions
   if (window.lichessImportInitialized) return;
   window.lichessImportInitialized = true;
@@ -172,7 +175,7 @@
       await new Promise(r => setTimeout(r, 300));
 
       // Get PGN from storage
-      const result = await chrome.storage.local.get(['pendingPGN', 'pendingTimestamp']);
+      const result = await api.storage.local.get(['pendingPGN', 'pendingTimestamp']);
 
       if (!result.pendingPGN) {
         console.log('[Lichess Import] No pending PGN');
@@ -183,7 +186,7 @@
       const age = Date.now() - (result.pendingTimestamp || 0);
       if (age > MAX_AGE_MS) {
         console.log('[Lichess Import] PGN expired');
-        await chrome.storage.local.remove(['pendingPGN', 'pendingTimestamp']);
+        await api.storage.local.remove(['pendingPGN', 'pendingTimestamp']);
         return;
       }
 
@@ -194,7 +197,7 @@
 
       if (success) {
         // Clean up storage
-        await chrome.storage.local.remove(['pendingPGN', 'pendingTimestamp']);
+        await api.storage.local.remove(['pendingPGN', 'pendingTimestamp']);
         console.log('[Lichess Import] Completed successfully');
       }
 

@@ -4,6 +4,9 @@
 (function() {
   'use strict';
 
+  // Cross-browser API compatibility
+  const api = typeof browser !== 'undefined' ? browser : chrome;
+
   // Avoid multiple injections
   if (window.chessExportInitialized) return;
   window.chessExportInitialized = true;
@@ -212,10 +215,10 @@
       url: window.location.href
     };
 
-    chrome.storage.local.get(['gameHistory'], (result) => {
+    api.storage.local.get(['gameHistory'], (result) => {
       const history = result.gameHistory || [];
       history.unshift(historyEntry);
-      chrome.storage.local.set({ gameHistory: history.slice(0, 50) });
+      api.storage.local.set({ gameHistory: history.slice(0, 50) });
       console.log('[Chess Export] Saved to history');
     });
   }
@@ -248,7 +251,7 @@
       saveToHistory(pgn);
 
       // Send to Lichess
-      await chrome.storage.local.set({
+      await api.storage.local.set({
         pendingPGN: pgn,
         pendingTimestamp: Date.now()
       });

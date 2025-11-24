@@ -1,5 +1,8 @@
 // Popup Script - Game history management
 
+// Cross-browser API compatibility
+const api = typeof browser !== 'undefined' ? browser : chrome;
+
 document.addEventListener('DOMContentLoaded', () => {
   loadHistory();
   setupEventListeners();
@@ -12,7 +15,7 @@ function setupEventListeners() {
   // Clear history button
   document.getElementById('clearHistory').addEventListener('click', async () => {
     if (confirm('Do you really want to clear all history?')) {
-      await chrome.storage.local.set({ gameHistory: [] });
+      await api.storage.local.set({ gameHistory: [] });
       loadHistory();
       showToast('History cleared', 'success');
     }
@@ -27,7 +30,7 @@ async function loadHistory() {
   const emptyState = document.getElementById('emptyState');
 
   try {
-    const result = await chrome.storage.local.get(['gameHistory']);
+    const result = await api.storage.local.get(['gameHistory']);
     const history = result.gameHistory || [];
 
     historyList.innerHTML = '';
@@ -85,12 +88,12 @@ async function loadHistory() {
  * Analyzes a game on Lichess
  */
 async function analyseGame(pgn) {
-  await chrome.storage.local.set({
+  await api.storage.local.set({
     pendingPGN: pgn,
     pendingTimestamp: Date.now()
   });
 
-  chrome.tabs.create({
+  api.tabs.create({
     url: 'https://lichess.org/paste',
     active: true
   });
@@ -115,11 +118,11 @@ async function copyPGN(pgn) {
  * Deletes a game from history
  */
 async function deleteGame(id) {
-  const result = await chrome.storage.local.get(['gameHistory']);
+  const result = await api.storage.local.get(['gameHistory']);
   const history = result.gameHistory || [];
   const filtered = history.filter(game => game.id !== id);
 
-  await chrome.storage.local.set({ gameHistory: filtered });
+  await api.storage.local.set({ gameHistory: filtered });
 
   // Delete animation
   const item = document.querySelector(`.history-item[data-id="${id}"]`);

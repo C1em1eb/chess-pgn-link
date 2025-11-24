@@ -1,8 +1,11 @@
 // Background Service Worker
 // Manages communication between content scripts and storage
 
+// Cross-browser API compatibility
+const api = typeof browser !== 'undefined' ? browser : chrome;
+
 // Listen for messages from content scripts
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+api.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.action) {
     case 'openLichess':
       openLichessWithPGN(request.pgn);
@@ -33,13 +36,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
  */
 async function openLichessWithPGN(pgn) {
   // Store the PGN
-  await chrome.storage.local.set({
+  await api.storage.local.set({
     pendingPGN: pgn,
     pendingTimestamp: Date.now()
   });
 
   // Open Lichess tab
-  chrome.tabs.create({
+  api.tabs.create({
     url: 'https://lichess.org/paste',
     active: true
   });
@@ -49,7 +52,7 @@ async function openLichessWithPGN(pgn) {
  * Retrieves game history
  */
 async function getGameHistory() {
-  const result = await chrome.storage.local.get(['gameHistory']);
+  const result = await api.storage.local.get(['gameHistory']);
   return result.gameHistory || [];
 }
 
@@ -57,7 +60,7 @@ async function getGameHistory() {
  * Clears history
  */
 async function clearGameHistory() {
-  await chrome.storage.local.set({ gameHistory: [] });
+  await api.storage.local.set({ gameHistory: [] });
 }
 
 /**
@@ -66,7 +69,7 @@ async function clearGameHistory() {
 async function deleteGameFromHistory(id) {
   const history = await getGameHistory();
   const filtered = history.filter(game => game.id !== id);
-  await chrome.storage.local.set({ gameHistory: filtered });
+  await api.storage.local.set({ gameHistory: filtered });
 }
 
 /**
@@ -77,11 +80,11 @@ function exportGameToLichess(pgn) {
 }
 
 // Listen for extension installation
-chrome.runtime.onInstalled.addListener((details) => {
+api.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     console.log('[Chess Export] Extension installed');
     // Initialize storage
-    chrome.storage.local.set({
+    api.storage.local.set({
       gameHistory: [],
       settings: {
         autoAnalyse: true,
@@ -91,20 +94,16 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-// Periodically clean up expired PGNs
-chrome.alarms.create('cleanupPGN', { periodInMinutes: 5 });
-
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === 'cleanupPGN') {
-    chrome.storage.local.get(['pendingTimestamp'], (result) => {
-      if (result.pendingTimestamp) {
-        const age = Date.now() - result.pendingTimestamp;
-        if (age > 60000) { // More than one minute
-          chrome.storage.local.remove(['pendingPGN', 'pendingTimestamp']);
-        }
+// Periodically clean up expired PGNs (Firefox-compatible)
+setInterval(() => {
+  api.storage.local.get(['pendingTimestamp'], (result) => {
+    if (result.pendingTimestamp) {
+      const age = Date.now() - result.pendingTimestamp;
+      if (age > 60000) { // More than one minute
+        api.storage.local.remove(['pendingPGN', 'pendingTimestamp']);
       }
-    });
-  }
-});
+    }
+  });
+}, 5 * 60 * 1000); // 5 minutes
 
 console.log('[Chess Export] Service worker started');
